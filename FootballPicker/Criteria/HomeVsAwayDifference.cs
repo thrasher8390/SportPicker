@@ -18,9 +18,9 @@ namespace FootballPicker.Criteria
         public HomeVsAwayDifference(double homeGameScoreDifferential, double awayGameScoreDifferential, bool isHome)
         {
             this.homeGameScoreDifferential = homeGameScoreDifferential;
-            homeScore.New(homeGameScoreDifferential);
+            homeScore.New(this.homeGameScoreDifferential);
             this.awayGameScoreDifferential = awayGameScoreDifferential;
-            awayScore.New(awayGameScoreDifferential);
+            awayScore.New(this.awayGameScoreDifferential);
             this.isHome = isHome;
         }
 

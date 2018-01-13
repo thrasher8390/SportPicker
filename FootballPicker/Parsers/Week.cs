@@ -56,5 +56,10 @@ namespace FootballPicker.Parsers
         {
             return (this.week < week.week || this.season.IsLessThan(week.season));
         }
+
+        public override string ToString()
+        {
+            return week.ToString();
+        }
     }
 }

@@ -46,9 +46,9 @@ namespace FootballPicker.Analyzers
             double scoreDifference = game.GetScoreDifference(this.Name);
 
             // This is meant to define the truth. Therefore if a team
-            // was predicted to win and they win, the value will be negative
-            // If a team was predicted to lose and they lost it'll result in a negative
-            // That way later when we lose the value if a team is rank a certain way,
+            // was predicted to win and they win, the value will be positive
+            // If a team was predicted to lose and they lost it'll result in a positive
+            // That way later when we use the value, if a team is rank a certain way,
             // We can multiply by that games powerRankingDifference to get a confidence
             double value = scoreDifference / powerRankingDifference;
             AveragePowerRankingMultiplier.New(value);

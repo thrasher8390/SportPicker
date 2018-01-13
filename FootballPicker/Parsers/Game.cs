@@ -9,17 +9,17 @@ namespace FootballPicker.Parsers
         public bool IsFinished = true;
         public Season Season;
         public Week Week;
-        public Team Team1;
-        public Team Team2;
+        public Team AwayTeam;
+        public Team HomeTeam;
 
-        Team Home;
+        Team HomeTeamCopy;
 
         private bool IsValid = true;
-        private int team1Score;
-        private int team1PowerRanking;
+        private int AwayScore;
+        private int AwayPowerRanking;
 
-        private int team2Score;
-        private int team2PowerRanking;
+        private int HomeScore;
+        private int HomePowerRanking;
 
         private Team Favorite;
         private double Spread;
@@ -60,6 +60,93 @@ namespace FootballPicker.Parsers
             parseStringArayIntoGame(stringArray);
         }
 
+        internal List<object> GetRaw()
+        {
+            List<object> rawGame = new List<object>();
+
+            foreach(DATA_BASE_INDEX index in Enum.GetValues(typeof(DATA_BASE_INDEX)))
+            {
+                switch(index)
+                {
+                    case DATA_BASE_INDEX.SEASON:
+                        {
+                            rawGame.Add(Season.ToString());
+                            break;
+                        }
+                    case DATA_BASE_INDEX.WEEK:
+                        {
+                            rawGame.Add(Week.ToString());
+                            break;
+                        }
+                    case DATA_BASE_INDEX.AWAY_TEAM:
+                        {
+                            rawGame.Add(AwayTeam.ToString());
+                            break;
+                        }
+                    case DATA_BASE_INDEX.AWAY_TEAM_SCORE:
+                        {
+                            rawGame.Add(AwayScore.ToString());
+                            break;
+                        }
+                    case DATA_BASE_INDEX.AWAY_TEAM_POWER_RANKING:
+                        {
+                            rawGame.Add(AwayPowerRanking.ToString());
+                            break;
+                        }
+                    case DATA_BASE_INDEX.HOME_TEAM:
+                        {
+                            rawGame.Add(HomeTeam.ToString());
+                            break;
+                        }
+                    case DATA_BASE_INDEX.HOME_TEAM_SCORE:
+                        {
+                            rawGame.Add(HomeScore.ToString());
+                            break;
+                        }
+                    case DATA_BASE_INDEX.HOME_TEAM_POWER_RANKING:
+                        {
+                            rawGame.Add(HomePowerRanking.ToString());
+                            break;
+                        }
+                    case DATA_BASE_INDEX.HOME_TEAM_COPY:
+                        {
+                            rawGame.Add(HomeTeamCopy.ToString());
+                            break;
+                        }
+                    case DATA_BASE_INDEX.FAVORITE_TEAM:
+                        {
+                            rawGame.Add(Favorite.ToString());
+                            break;
+                        }
+                    case DATA_BASE_INDEX.SPREAD:
+                        {
+                            rawGame.Add(Spread.ToString());
+                            break;
+                        }
+                    case DATA_BASE_INDEX.MAX:
+                    default:
+                        {
+                            break;
+                        }
+
+                }
+            }
+
+            return rawGame;
+        }
+
+        internal void UpdatePowerRanking(Team teamName, int rank)
+        {
+            if(AwayTeam.Equals(teamName))
+            {
+                AwayPowerRanking = rank;
+            }
+            else if(HomeTeam.Equals(teamName))
+            {
+                HomePowerRanking = rank;
+            }
+        }
+
         /// <summary>
         /// Will return a positive value if the team has a HIGHER ranking
         /// Note that a higher ranking is a lower number
@@ -71,13 +158,13 @@ namespace FootballPicker.Parsers
             checkIfTeamIsInGame(name);
 
             int powerRankingDifference;
-            if (Team1.Equals(name))
+            if (AwayTeam.Equals(name))
             {
-                powerRankingDifference = team2PowerRanking - team1PowerRanking;
+                powerRankingDifference = HomePowerRanking - AwayPowerRanking;
             }
             else
             {
-                powerRankingDifference = team1PowerRanking - team2PowerRanking;
+                powerRankingDifference = AwayPowerRanking - HomePowerRanking;
             }
 
             return powerRankingDifference;
@@ -85,7 +172,7 @@ namespace FootballPicker.Parsers
 
         internal bool IsHome(Team name)
         {
-            return Home.Equals(name);
+            return HomeTeamCopy.Equals(name);
         }
 
         /// <summary>
@@ -131,13 +218,13 @@ namespace FootballPicker.Parsers
             checkIfTeamIsInGame(name);
 
             int score;
-            if(Team1.Equals(name))
+            if(AwayTeam.Equals(name))
             {
-                score = team1Score - team2Score;
+                score = AwayScore - HomeScore;
             }
             else 
             {
-                score = team2Score - team1Score;
+                score = HomeScore - AwayScore;
             }
 
             return score;
@@ -153,8 +240,8 @@ namespace FootballPicker.Parsers
             Boolean gameHasTeam = false;
             if (IsValid)
             {
-                if (Team1.Equals(teamName) ||
-                    Team2.Equals(teamName))
+                if (AwayTeam.Equals(teamName) ||
+                    HomeTeam.Equals(teamName))
                 {
                     gameHasTeam = true;
                 }
@@ -167,13 +254,13 @@ namespace FootballPicker.Parsers
         {
             Team actualWinner = new Team();
 
-            if(team1Score > team2Score)
+            if(AwayScore > HomeScore)
             {
-                actualWinner = Team1;
+                actualWinner = AwayTeam;
             }
-            else if( team2Score > team1Score)
+            else if( HomeScore > AwayScore)
             {
-                actualWinner = Team2;
+                actualWinner = HomeTeam;
             }
 
             return actualWinner;
@@ -191,8 +278,8 @@ namespace FootballPicker.Parsers
                 if (rawGame[(int)DATA_BASE_INDEX.AWAY_TEAM_SCORE].Length > 0 &&
                     rawGame[(int)DATA_BASE_INDEX.HOME_TEAM_SCORE].Length > 0)
                 {
-                    team1Score = Convert.ToInt16(rawGame[(int)DATA_BASE_INDEX.AWAY_TEAM_SCORE]);
-                    team2Score = Convert.ToInt16(rawGame[(int)DATA_BASE_INDEX.HOME_TEAM_SCORE]);
+                    AwayScore = Convert.ToInt16(rawGame[(int)DATA_BASE_INDEX.AWAY_TEAM_SCORE]);
+                    HomeScore = Convert.ToInt16(rawGame[(int)DATA_BASE_INDEX.HOME_TEAM_SCORE]);
                 }
                 else
                 {
@@ -208,11 +295,14 @@ namespace FootballPicker.Parsers
             {
                 Season = new Season(rawGame[(int)DATA_BASE_INDEX.SEASON]);
                 Week = new Week(rawGame[(int)DATA_BASE_INDEX.WEEK], Season);
-                Team1 = new Team(rawGame[(int)DATA_BASE_INDEX.AWAY_TEAM]);
-                Team2 = new Team(rawGame[(int)DATA_BASE_INDEX.HOME_TEAM]);
-                Home = new Team(rawGame[(int)DATA_BASE_INDEX.HOME_TEAM_COPY]);
+                AwayTeam = new Team(rawGame[(int)DATA_BASE_INDEX.AWAY_TEAM]);                
+                HomeTeam = new Team(rawGame[(int)DATA_BASE_INDEX.HOME_TEAM]);
+                HomeTeamCopy = new Team(rawGame[(int)DATA_BASE_INDEX.HOME_TEAM_COPY]);
                 Favorite = new Team(rawGame[(int)DATA_BASE_INDEX.FAVORITE_TEAM]);
                 Spread = Convert.ToDouble(rawGame[(int)DATA_BASE_INDEX.SPREAD]);
+
+                HomePowerRanking = convertDBtoPowerRanking(rawGame[(int)DATA_BASE_INDEX.HOME_TEAM_POWER_RANKING]);
+                AwayPowerRanking = convertDBtoPowerRanking(rawGame[(int)DATA_BASE_INDEX.AWAY_TEAM_POWER_RANKING]);
             }
             catch (FormatException ex)
             {
@@ -227,15 +317,27 @@ namespace FootballPicker.Parsers
             }
         }
 
+        private int convertDBtoPowerRanking(string powerRankingString)
+        {
+            int powerRanking = 0;
+
+            if(powerRankingString.Length > 0)
+            {
+                powerRanking = Convert.ToInt32(powerRankingString);
+            }
+
+            return powerRanking;
+        }
+
         /// <summary>
         /// This is a private function that is meant to throw an exception if the team is not right
         /// </summary>
         /// <param name="name"></param>
         private void checkIfTeamIsInGame(Team name)
         {
-            if (!Team1.Equals(name) && !Team2.Equals(name))
+            if (!AwayTeam.Equals(name) && !HomeTeam.Equals(name))
             {
-                throw new NotSupportedException("Team {" + name + "} Did not play in this game. It was {" + Team1 + " vs " + Team2 + "}");
+                throw new NotSupportedException("Team {" + name + "} Did not play in this game. It was {" + AwayTeam + " vs " + HomeTeam + "}");
             }
         }
     }

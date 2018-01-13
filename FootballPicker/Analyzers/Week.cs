@@ -28,8 +28,8 @@ namespace FootballPicker.Analyzers
             //Figure out all of the games and analyze each team
             foreach(Parsers.Game game in thisWeeksGames)
             {
-                Team team1 = teamAnalyzerList.Find(team => game.Team1.Equals(team.Name));
-                Team team2 = teamAnalyzerList.Find(team => game.Team2.Equals(team.Name));
+                Team team1 = teamAnalyzerList.Find(team => game.AwayTeam.Equals(team.Name));
+                Team team2 = teamAnalyzerList.Find(team => game.HomeTeam.Equals(team.Name));
 
                 GameAnalyzerList.Add(new Game(team1, team2, game));
             }

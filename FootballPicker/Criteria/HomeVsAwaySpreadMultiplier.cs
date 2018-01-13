@@ -15,13 +15,16 @@ namespace FootballPicker.Criteria
         private double AwayGameSpreadMultiplier;
         private bool isHome;
 
-        public HomeVsAwaySpreadMultiplier(double homeGameSpreadMultiplier, double awayGameSpreadMultiplier, bool isHome)
+        public HomeVsAwaySpreadMultiplier(double homeGameSpreadMultiplier, double awayGameSpreadMultiplier, double spread, bool isHome)
         {
-            this.HomeGameSpreadMultiplier = homeGameSpreadMultiplier;
-            homeScore.New(homeGameSpreadMultiplier);
-            this.AwayGameSpreadMultiplier = awayGameSpreadMultiplier;
-            awayScore.New(awayGameSpreadMultiplier);
             this.isHome = isHome;
+
+            this.HomeGameSpreadMultiplier = (homeGameSpreadMultiplier * Math.Abs(spread)) - spread;
+            homeScore.New(HomeGameSpreadMultiplier);
+       
+            this.AwayGameSpreadMultiplier = (awayGameSpreadMultiplier * Math.Abs(spread)) - spread;
+            awayScore.New(AwayGameSpreadMultiplier);
+            
         }
 
         public override double GetNormalized()

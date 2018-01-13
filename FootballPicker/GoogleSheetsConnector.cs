@@ -18,10 +18,14 @@ namespace FootballPicker
     {
         // If modifying these scopes, delete your previously saved credentials
         // at ~/.credentials/sheets.googleapis.com-dotnet-quickstart.json
-        static string[] Scopes = { SheetsService.Scope.SpreadsheetsReadonly };
+        static string[] Scopes = { SheetsService.Scope.Spreadsheets };
         static string ApplicationName = "Google Sheets API .NET Quickstart";
 
-        IList<IList<Object>> Values;
+        // Define request parameters.
+        private const String SpreadsheetId = "1F3C1LaOyu9BQvQpFksRdt25SzDo9D3rgF58NyAWtqpc";
+        private const String Range = "2017!A2:K";
+
+        SheetsService Service;
 
         public GoogleSheetsConnector()
         {
@@ -44,22 +48,26 @@ namespace FootballPicker
             }
 
             // Create Google Sheets API service.
-            var service = new SheetsService(new BaseClientService.Initializer()
+            Service = new SheetsService(new BaseClientService.Initializer()
             {
                 HttpClientInitializer = credential,
                 ApplicationName = ApplicationName,
             });
 
-            // Define request parameters.
-            String spreadsheetId = "1F3C1LaOyu9BQvQpFksRdt25SzDo9D3rgF58NyAWtqpc";
-            String range = "2017!A2:K";
-            SpreadsheetsResource.ValuesResource.GetRequest request =
-                    service.Spreadsheets.Values.Get(spreadsheetId, range);
+            
+            
+        }
 
-            // Prints the names and majors of students in a sample spreadsheet:
-            // https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
-            ValueRange response = request.Execute();
-            Values = response.Values;
+        internal void UpdateDataBase(IList<IList<object>> updatedDatabase)
+        {
+            ValueRange valueRange = new ValueRange();
+            valueRange.MajorDimension = "ROWS";//"ROWS";//COLUMNS
+
+            valueRange.Values = updatedDatabase;
+
+            SpreadsheetsResource.ValuesResource.UpdateRequest update = Service.Spreadsheets.Values.Update(valueRange, SpreadsheetId, Range);
+            update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
+            UpdateValuesResponse result2 = update.Execute();
         }
 
         /// <summary>
@@ -68,6 +76,16 @@ namespace FootballPicker
         /// <returns></returns>
         public IList<IList<Object>> GetDataBase()
         {
+            IList<IList<Object>> Values;
+
+            SpreadsheetsResource.ValuesResource.GetRequest request =
+                    Service.Spreadsheets.Values.Get(SpreadsheetId, Range);
+
+            // Prints the names and majors of students in a sample spreadsheet:
+            // https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
+            ValueRange response = request.Execute();
+            Values = response.Values;
+
             return Values;
         }
     }

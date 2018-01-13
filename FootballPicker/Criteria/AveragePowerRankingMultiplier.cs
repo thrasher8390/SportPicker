@@ -8,11 +8,12 @@ namespace FootballPicker.Criteria
 {
     public class AveragePowerRankingMultiplier : Criteria
     {
-        private double value;
+        private double value = 0;
         protected static Normalizer normal = new Normalizer();
-        public AveragePowerRankingMultiplier(double powerRankingDifference, double scoreDifference)
+        public AveragePowerRankingMultiplier(double averagePowerRankingMultiplier, double powerRankingDifference)
         {
-            value = 0;
+            value = ((averagePowerRankingMultiplier * Math.Abs(powerRankingDifference)) + powerRankingDifference);
+            
             normal.New(value);
         }
 

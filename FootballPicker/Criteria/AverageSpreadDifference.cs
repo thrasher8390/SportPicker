@@ -16,8 +16,8 @@ namespace FootballPicker.Criteria
         }
         public AverageSpreadDifference(double averageSpreadDifference, double spread)
         {
-            value = averageSpreadDifference;
-            normal.New(averageSpreadDifference - spread);
+            value = averageSpreadDifference - spread;
+            normal.New(value);
         }
 
         public override double GetNormalized()
