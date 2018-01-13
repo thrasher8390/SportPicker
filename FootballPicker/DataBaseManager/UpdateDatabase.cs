@@ -1,4 +1,6 @@
 ﻿using FootballPicker.InternetConnection;
+using FootballPicker.Parsers;
+using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,15 +11,12 @@ namespace FootballPicker.DataBaseManager
 {
     public class UpdateDatabase
     {
-        public UpdateDatabase()
+        public UpdateDatabase(DataBase database)
         {
-            UpdatePowerRankings();
-        }
+            Week staticWeek = new Week(19, new Season(2017));
+            string powerRankingSite = "http://www.nfl.com/news/story/0ap3000000904608/article/nfl-power-rankings-saints-falcons-soar-into-divisional-round";
 
-        private void UpdatePowerRankings()
-        {
-            InternetConnector conn = new InternetConnector("https://www.cbssports.com/nfl/powerrankings/");
-            var html = conn.GetHtml();
+            PowerRankings.Update(database, staticWeek, powerRankingSite);
         }
     }
 }

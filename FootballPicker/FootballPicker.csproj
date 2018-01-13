@@ -97,6 +97,7 @@
     <Compile Include="Criteria\Criteria.cs" />
     <Compile Include="Criteria\HomeVsAwayDifference.cs" />
     <Compile Include="DataBaseManager\UpdateDatabase.cs" />
+    <Compile Include="DataBaseManager\PowerRankings.cs" />
     <Compile Include="InternetConnection\InternetConnector.cs" />
     <Compile Include="MachineLearner.cs" />
     <Compile Include="Predictions\WeekWinners.cs" />

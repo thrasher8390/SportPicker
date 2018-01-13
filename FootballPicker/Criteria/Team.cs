@@ -22,11 +22,11 @@ namespace FootballPicker.Criteria
             double gameSpread = game.GetSpread(this.TeamInfo.Name);
             Boolean isHome = game.IsHome(TeamInfo.Name);
 
-            CriteriaList.Add(new AverageScoreDifference(this.TeamInfo.AverageScoreDifference.Get()));
             CriteriaList.Add(new AverageSpreadDifference(this.TeamInfo.AverageSpreadDifference.Get(), gameSpread));
             CriteriaList.Add(new HomeVsAwayDifference(this.TeamInfo.HomeGameScoreDifferential.Get(), TeamInfo.AwayGameScoreDifferential.Get(), isHome));
-            CriteriaList.Add(new HomeVsAwaySpreadMultiplier(this.TeamInfo.HomeGameSpreadMultiplier.Get(), TeamInfo.AwayGameSpreadMultiplier.Get(), isHome));
             CriteriaList.Add(new WinLossPercentage(this.TeamInfo.WinLossMultiplier.Get()));
+            CriteriaList.Add(new HomeVsAwaySpreadMultiplier(this.TeamInfo.HomeGameSpreadMultiplier.Get(), TeamInfo.AwayGameSpreadMultiplier.Get(), gameSpread, isHome));
+            CriteriaList.Add(new AverageScoreDifference(this.TeamInfo.AverageScoreDifference.Get()));
             CriteriaList.Add(new AveragePowerRankingMultiplier(this.TeamInfo.AveragePowerRankingMultiplier.Get(), game.GetPowerRankingDifference(TeamInfo.Name)));
             CriteriaList.Add(new AverageSpreadMultiplier(this.TeamInfo.AverageSpreadMultiplier.Get(), gameSpread));
         }

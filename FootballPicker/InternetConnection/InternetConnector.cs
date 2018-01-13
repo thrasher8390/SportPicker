@@ -17,6 +17,7 @@ namespace FootballPicker.InternetConnection
             string html = new WebClient().DownloadString(webURL);
             HtmlReader = new HtmlDocument();
             HtmlReader.LoadHtml(html);
+            
         }
 
         public HtmlDocument GetHtml()

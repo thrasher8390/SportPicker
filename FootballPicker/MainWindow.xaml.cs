@@ -14,27 +14,30 @@ namespace FootballPicker
     {
         public MainWindow()
         {
-            UpdateDatabase updater = new UpdateDatabase();
-
             DataBase database = new DataBase();
+            UpdateDatabase updater = new UpdateDatabase(database);
+            database.UpdateServer();
+
+            Season season = new Season("2017");
+            Week currentWeek = new Week(19, season);
+
             MachineLearner machineLearner = new MachineLearner();
             int totalScore = 0;
 
-            for (int tempWeek = 1; tempWeek <= 17; tempWeek++)
+            for (int thisWeek = 1; thisWeek <= currentWeek.week; thisWeek++)
             {
-                Console.WriteLine(tempWeek);
-                List<Analyzers.Team> teamAnalyzerList = new List<Analyzers.Team>();
-            
-                Parsers.Season season = new Parsers.Season("2017");
-                Parsers.Week week = new Parsers.Week(tempWeek, season);
+                Console.WriteLine((int)thisWeek);
+                List<Analyzers.Team> oldTeamAnalyzerList = new List<Analyzers.Team>();
+
+                Parsers.Week tempWeek = new Parsers.Week((int)thisWeek, season);
 
                 //Run the team analyzer for each team
                 foreach (Parsers.Team name in Parsers.Team.GetAll())
                 {
-                    teamAnalyzerList.Add(new Analyzers.Team(name, database.GetGames(name, week-2, 16)));
+                    oldTeamAnalyzerList.Add(new Analyzers.Team(name, database.GetGames(name, tempWeek-2)));
                 }
 
-                Analyzers.Week lastWeek = new Analyzers.Week(teamAnalyzerList, database.GetGames(week-1));
+                Analyzers.Week lastWeek = new Analyzers.Week(oldTeamAnalyzerList, database.GetGames(tempWeek-1));
 
                 machineLearner.Reset();
                 while (machineLearner.HasMore())
@@ -44,9 +47,17 @@ namespace FootballPicker
                     machineLearner.SetTotalScoreFromLastReading(learningWinners.GetLeagueScore());
                 }
 
+                List<Analyzers.Team> newTeamAnalyzerList = new List<Analyzers.Team>();
+
+                //Run the team analyzer for each team
+                foreach (Parsers.Team name in Parsers.Team.GetAll())
+                {
+                    newTeamAnalyzerList.Add(new Analyzers.Team(name, database.GetGames(name, tempWeek - 1)));
+                }
+
                 //Now lets make the ranking for this week!!!
-                Analyzers.Week thisWeek = new Analyzers.Week(teamAnalyzerList, database.GetGames(week));
-                WeekWinners thisWeekWinners = new WeekWinners(thisWeek, machineLearner.GetBestRatio());
+                Analyzers.Week thisWeeks = new Analyzers.Week(newTeamAnalyzerList, database.GetGames(tempWeek));
+                WeekWinners thisWeekWinners = new WeekWinners(thisWeeks, machineLearner.GetBestRatio());
 
                 int leageScore = thisWeekWinners.GetLeagueScore();
                 totalScore += leageScore;
@@ -59,7 +70,7 @@ namespace FootballPicker
                     int score = 16;
                     foreach(GameWinner winner in thisWeekWinners.GameWinners)
                     {
-                        Console.WriteLine(winner.Predicted.ToString() + "\t:" + score--);
+                        Console.WriteLine(winner.Predicted.ToString() + "\t:" + winner.Confidence + "\t:" + score--);
                     }
                 }
                 Console.WriteLine();

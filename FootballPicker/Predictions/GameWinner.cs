@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FootballPicker.Analyzers;
 
 namespace FootballPicker.Predictions
@@ -13,8 +10,8 @@ namespace FootballPicker.Predictions
         public Parsers.Team Predicted;
         public Parsers.Team Actual;
         private List<double> criteriaRating;
-
-        private void getWinner(Analyzers.Game game)
+    
+        private void getWinner(Game game)
         {
             this.Actual = game.Info.GetActualWinner();
 
@@ -67,6 +64,12 @@ namespace FootballPicker.Predictions
         private double CalculateConfidence(Criteria.Team team)
         {
             double confidence = 0;
+
+            if(criteriaRating.Count != team.CriteriaList.Count)
+            {
+                throw new Exception("the Criteria Rating in Machine Learner does not match the size of the Criteria list in Criteria.Team");
+            }
+
             //Figure out Team
             for(int i = 0; i< team.CriteriaList.Count; i++)
             {

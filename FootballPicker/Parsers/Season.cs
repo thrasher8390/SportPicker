@@ -45,5 +45,10 @@ namespace FootballPicker.Parsers
         {
             return new Season(obj.season - 1);
         }
+
+        public override string ToString()
+        {
+            return season.ToString();
+        }
     }
 }

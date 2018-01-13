@@ -27,6 +27,20 @@ namespace FootballPicker.Parsers
         }
 
         /// <summary>
+        /// Convert the GameList to what we get from gsc.GetDataBase()
+        /// </summary>
+        internal void UpdateServer()
+        {
+            IList<IList<Object>> updatedDatabase = new List<IList<Object>>();
+            foreach( Game game in GameList)
+            {
+                updatedDatabase.Add(game.GetRaw());
+            }
+            GoogleSheetsConnector gsc = new GoogleSheetsConnector();
+            gsc.UpdateDataBase(updatedDatabase);
+        }
+
+        /// <summary>
         /// Get all games that include the given team
         /// </summary>
         /// <param name="teamName"></param>
@@ -45,6 +59,21 @@ namespace FootballPicker.Parsers
             return returnList;
         }
 
+        internal void UpdateRank(Week week, Team teamName, int rank)
+        {
+            Game game = GetGames(teamName).Find(x => x.Week.Equals(week));
+            //Skip the teams that have a buy week
+            if (game != null)
+            {
+                game.UpdatePowerRanking(teamName, rank);
+            }
+        }
+
+        internal List<Game> GetGames(Team teamName, Week week)
+        {
+            //Run it for 10 seasons in the past
+            return GetGames(teamName, week, 119*10);
+        }
         /// <summary>
         /// Get all games that include the given team up to a given week. E.g. all games up to week 12 season 2017
         /// </summary>

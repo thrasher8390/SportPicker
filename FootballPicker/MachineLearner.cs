@@ -73,7 +73,7 @@ namespace FootballPicker
 
         public List<double> GetCriteriaRating()
         {
-            if(request == learningList.Count-1)
+            if(request >= learningList.Count-1)
             {
                 hasMore = false;
             }
