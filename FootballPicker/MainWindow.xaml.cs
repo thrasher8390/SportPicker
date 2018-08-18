@@ -4,6 +4,7 @@ using FootballPicker.Predictions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace FootballPicker
@@ -44,18 +45,16 @@ namespace FootballPicker
         {
             InitializeComponent();
             this.DataContext = this;
-
-            runPicker();
         }
 
-        private void runPicker()
+        private void runPicker(int week)
         {
-             DataBase database = new DataBase();
+            DataBase database = new DataBase();
             UpdateDatabase updater = new UpdateDatabase(database);
             database.UpdateServer();
 
             Season season = new Season("2017");
-            Week currentWeek = new Week(1, season);
+            Week currentWeek = new Week(week, season);
 
             MachineLearner machineLearner = new MachineLearner();
             int totalScore = 0;
@@ -111,6 +110,16 @@ namespace FootballPicker
                 }
                 Console.WriteLine();
             }
+        }
+
+        private void tbWeekToCalculate_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            //Need to add catching of non numbers
+            try
+            {
+                runPicker(int.Parse(tbWeekToCalculate.Text));
+            }
+            catch { }
         }
     }
 }
