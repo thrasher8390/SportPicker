@@ -99,7 +99,7 @@
     <Compile Include="DataBaseManager\UpdateDatabase.cs" />
     <Compile Include="DataBaseManager\PowerRankings.cs" />
     <Compile Include="InternetConnection\InternetConnector.cs" />
-    <Compile Include="MachineLearner.cs" />
+    <Compile Include="Learning\MachineLearner.cs" />
     <Compile Include="Predictions\WeekWinners.cs" />
     <Compile Include="Predictions\GameWinner.cs" />
     <Compile Include="App.xaml.cs">
@@ -108,7 +108,7 @@
     </Compile>
     <Compile Include="Criteria\Team.cs" />
     <Compile Include="Criteria\Normalizer.cs" />
-    <Compile Include="GoogleSheetsConnector.cs" />
+    <Compile Include="InternetConnection\GoogleSheetsConnector.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -137,8 +137,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="client_secret.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Include="credentials.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="DataBaseManager\database.csv" />
     <None Include="packages.config" />

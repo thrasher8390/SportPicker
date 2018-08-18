@@ -6,8 +6,8 @@ namespace FootballPicker.Predictions
 {
     public class GameWinner
     {
-        public double Confidence;
-        public Parsers.Team Predicted;
+        public double Confidence { get; set; }
+        public Parsers.Team Predicted { get; set; }
         public Parsers.Team Actual;
         private List<double> criteriaRating;
     

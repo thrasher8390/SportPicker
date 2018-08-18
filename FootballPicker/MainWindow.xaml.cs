@@ -3,6 +3,8 @@ using FootballPicker.Parsers;
 using FootballPicker.Predictions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace FootballPicker
@@ -10,16 +12,49 @@ namespace FootballPicker
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        internal void RaisePropertyChanged(string prop)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (!string.IsNullOrEmpty(prop) && handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(prop));
+            }
+        }
+
+        private WeekWinners thisWeekWinners;
+        public WeekWinners ThisWeekWinners
+        {
+            get
+            {
+                return thisWeekWinners;
+            }
+            set
+            {
+                if(value != null)
+                {
+                    thisWeekWinners = value;
+                    RaisePropertyChanged("ThisWeekWinners");
+                }
+            }
+        }
+
         public MainWindow()
+        {
+            InitializeComponent();
+            this.DataContext = this;
+        }
+
+        private void runPicker(int week)
         {
             DataBase database = new DataBase();
             UpdateDatabase updater = new UpdateDatabase(database);
             database.UpdateServer();
 
             Season season = new Season("2017");
-            Week currentWeek = new Week(19, season);
+            Week currentWeek = new Week(week, season);
 
             MachineLearner machineLearner = new MachineLearner();
             int totalScore = 0;
@@ -57,9 +92,9 @@ namespace FootballPicker
 
                 //Now lets make the ranking for this week!!!
                 Analyzers.Week thisWeeks = new Analyzers.Week(newTeamAnalyzerList, database.GetGames(tempWeek));
-                WeekWinners thisWeekWinners = new WeekWinners(thisWeeks, machineLearner.GetBestRatio());
+                ThisWeekWinners = new WeekWinners(thisWeeks, machineLearner.GetBestRatio());
 
-                int leageScore = thisWeekWinners.GetLeagueScore();
+                int leageScore = ThisWeekWinners.GetLeagueScore();
                 totalScore += leageScore;
                 if (leageScore > 20)
                 {
@@ -68,14 +103,23 @@ namespace FootballPicker
                 else
                 {
                     int score = 16;
-                    foreach(GameWinner winner in thisWeekWinners.GameWinners)
+                    foreach(GameWinner winner in ThisWeekWinners)
                     {
                         Console.WriteLine(winner.Predicted.ToString() + "\t:" + winner.Confidence + "\t:" + score--);
                     }
                 }
                 Console.WriteLine();
             }
-            InitializeComponent();
+        }
+
+        private void tbWeekToCalculate_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            //Need to add catching of non numbers
+            try
+            {
+                runPicker(int.Parse(tbWeekToCalculate.Text));
+            }
+            catch { }
         }
     }
 }

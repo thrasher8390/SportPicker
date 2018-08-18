@@ -5,15 +5,35 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FootballPicker"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <ListBox HorizontalAlignment="Left" Height="245" Margin="10,64,0,0" VerticalAlignment="Top" Width="497" ItemsSource="{Binding GameWinners}">
-        <ListBox.ItemTemplate>
-            <DataTemplate>
-                <StackPanel>
-                    <TextBlock Text="{Binding Path=Name}"/>
-                </StackPanel>
-            </DataTemplate>
-        </ListBox.ItemTemplate>
-        <TextBlock Height="100" TextWrapping="Wrap" Text="TextBlock" Width="100"/>
-    </ListBox>
+        Title="Football Picker" Height="350" Width="525" WindowState="Maximized">
+    <Grid Background="Chocolate">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <TextBox Grid.Row="0" Grid.Column="0" Name="tbWeekToCalculate" TextChanged="tbWeekToCalculate_TextChanged"/>
+
+        <ListBox Grid.Row="1" Grid.Column="1" Name="lbThisWeekWinners" ItemsSource="{Binding Path=ThisWeekWinners}" Margin="100,100,100,0" HorizontalContentAlignment="Stretch" VerticalAlignment="Top">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,2" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="100" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding Predicted}" />
+                        <TextBlock Grid.Column="1" Text="{Binding Confidence}" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+
 </Window>
