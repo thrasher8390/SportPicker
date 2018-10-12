@@ -10,20 +10,20 @@ namespace FootballPicker.Analyzers
         private Parsers.Week week;
         public Week(List<Team> teamAnalyzerList, List<Parsers.Game> thisWeeksGames)
         {
-            //This is hacky
+            //This is hacky but allows us to debug
             if (thisWeeksGames.Count > 0)
             {
                 this.week = thisWeeksGames[0].Week;
             }
 
             //Reset all criteria for this week!
+            AveragePowerRankingMultiplier.Reset();
             AverageScoreDifference.Reset();
             AverageSpreadDifference.Reset();
             AverageSpreadMultiplier.Reset();
             HomeVsAwayDifference.Reset();
             HomeVsAwaySpreadMultiplier.Reset();
             WinLossPercentage.Reset();
-            AveragePowerRankingMultiplier.Reset();
 
             //Figure out all of the games and analyze each team
             foreach(Parsers.Game game in thisWeeksGames)

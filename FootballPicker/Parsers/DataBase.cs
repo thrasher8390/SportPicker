@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace FootballPicker.Parsers
 {
@@ -29,7 +25,7 @@ namespace FootballPicker.Parsers
         /// <summary>
         /// Convert the GameList to what we get from gsc.GetDataBase()
         /// </summary>
-        internal void UpdateServer()
+        internal void UpdateServer(Week week)
         {
             IList<IList<Object>> updatedDatabase = new List<IList<Object>>();
             foreach( Game game in GameList)
@@ -38,6 +34,38 @@ namespace FootballPicker.Parsers
             }
             GoogleSheetsConnector gsc = new GoogleSheetsConnector();
             gsc.UpdateDataBase(updatedDatabase);
+        }
+
+        internal void AddWeek(Week week, Team homeTeam, Team awayTeam, Team favorite, string spread)
+        {
+            AddWeek(week, homeTeam, awayTeam, favorite, spread, 0, 0);
+        }
+
+        
+        internal void AddWeek(Week week, Team homeTeam, Team awayTeam, Team favorite, string spread, int homeScore, int awayScore)
+        {
+            try
+            {
+                Game game = new Game(awayTeam, homeTeam, favorite, double.Parse(spread), week);
+                if (isNewGame(game))
+                {
+                    GameList.Add(game);
+                }
+                else
+                {
+                    Game gameToUpdate = GameList.Find(x => x.Equals(game));
+                    gameToUpdate.UpdateScores(homeScore,awayScore);
+                }
+            }
+            catch
+            {
+                Debugger.Break();
+            }
+        }
+
+        private bool isNewGame(Game game)
+        {
+            return !GameList.Contains(game);
         }
 
         /// <summary>
@@ -59,7 +87,13 @@ namespace FootballPicker.Parsers
             return returnList;
         }
 
-        internal void UpdateRank(Week week, Team teamName, int rank)
+        /// <summary>
+        /// This is used to update the power ranking of a given week and teamname
+        /// </summary>
+        /// <param name="week">The specific week that you would like to update</param>
+        /// <param name="teamName">The team of a given week that needs to be updated</param>
+        /// <param name="rank">What rank would you like to give them?</param>
+        internal void UpdatePowerRanking(Week week, Team teamName, int rank)
         {
             Game game = GetGames(teamName).Find(x => x.Week.Equals(week));
             //Skip the teams that have a buy week
@@ -72,7 +106,7 @@ namespace FootballPicker.Parsers
         internal List<Game> GetGames(Team teamName, Week week)
         {
             //Run it for 10 seasons in the past
-            return GetGames(teamName, week, 119*10);
+            return GetGames(teamName, week, 19*10);
         }
         /// <summary>
         /// Get all games that include the given team up to a given week. E.g. all games up to week 12 season 2017
@@ -113,6 +147,27 @@ namespace FootballPicker.Parsers
             foreach (Game game in this.GameList)
             {
                 if (game.Week.Equals(week))
+                {
+                    returnList.Add(game);
+                }
+            }
+
+            return returnList;
+        }
+
+        /// <summary>
+        /// Get all the games within a season/week
+        /// </summary>
+        /// <param name="season"></param>
+        /// <param name="week"></param>
+        /// <returns></returns>
+        internal List<Game> GetGames(Week week, bool isRegularSeason)
+        {
+            List<Game> returnList = new List<Game>();
+            foreach (Game game in this.GameList)
+            {
+                if (game.Week.Equals(week) && 
+                    game.Week.IsRegularSeason.Equals(isRegularSeason))
                 {
                     returnList.Add(game);
                 }

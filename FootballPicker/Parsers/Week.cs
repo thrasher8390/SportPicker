@@ -11,6 +11,29 @@ namespace FootballPicker.Parsers
         public Season season;
         internal int week;
 
+        public bool IsRegularSeason
+        {
+            get
+            {
+                return (0 < week) && (week <= 17);
+            }
+        }
+
+        public Week PreviousRegularSeasonWeek
+        {
+            get
+            {
+                Week week = this;
+                do
+                {
+                    week--;
+                }
+                while (!week.IsRegularSeason);
+
+                return week;
+            }
+        }
+
         public Week(int week, Season season)
         {
             this.week = week;
@@ -39,9 +62,9 @@ namespace FootballPicker.Parsers
         {
             Week thisWeek;
 
-            if (obj.week < i + 1)
+            if (obj.week <= i)
             {
-                thisWeek = new Week(obj.week + 16 - i, obj.season-1);
+                thisWeek = new Week(obj.week + 21 - i, obj.season-1);
             }
             else
             {
@@ -51,6 +74,37 @@ namespace FootballPicker.Parsers
             return thisWeek;
         }
 
+        public static Week operator --(Week obj)
+        {
+            return obj - 1;
+        }
+
+        public static bool operator <=(Week obj, Week obj2)
+        {
+            return obj.IsLessThan(obj2) || obj.Equals(obj2);
+        }
+
+        public static bool operator >=(Week obj, Week obj2)
+        {
+            return !obj.IsLessThan(obj2);
+        }
+
+        public static Week operator ++(Week obj)
+        {
+            Week thisWeek;
+
+            if(obj.week + 1 >= 21)
+            {
+                thisWeek = new Week(obj.week - 21 + 1, obj.season + 1);
+            }
+            else
+            {
+                thisWeek = new Week(obj.week + 1, obj.season);
+            }
+
+
+            return thisWeek;
+        }
 
         internal bool IsLessThan(Week week)
         {

@@ -54,7 +54,7 @@ namespace FootballPicker.DataBaseManager
                 var team = node.ChildNodes[1].ChildNodes;
                 var rank = int.Parse(team[1].ChildNodes[3].InnerText.Replace("\n", "").Replace(" ", ""));
                 var teamName = new Parsers.Team(team[5].ChildNodes[3].InnerText.Replace("\n", "").Replace(" ", ""));
-                database.UpdateRank(week, teamName, rank);
+                database.UpdatePowerRanking(week, teamName, rank);
             }
         }
 
@@ -71,7 +71,7 @@ namespace FootballPicker.DataBaseManager
                 var team = node.ChildNodes;
                 var rank = int.Parse(team[0].InnerText.Replace("\n", "").Replace(" ", ""));
                 var teamName = new Parsers.Team(team[1].InnerText.Replace("\n", "").Replace(" ", ""));
-                database.UpdateRank(week, teamName, rank);
+                database.UpdatePowerRanking(week, teamName, rank);
             }
         }
     }

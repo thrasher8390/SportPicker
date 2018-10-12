@@ -1,19 +1,27 @@
 ﻿using System;
 using System.Windows;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace FootballPicker.Parsers
 {
     public class Game
     {
-        public bool IsFinished = true;
-        public Season Season;
+        public bool IsFinished
+        {
+            get
+            {
+                return isFinished;
+            }
+        }
+
         public Week Week;
         public Team AwayTeam;
         public Team HomeTeam;
 
         Team HomeTeamCopy;
 
+        private bool isFinished = true;
         private bool IsValid = true;
         private int AwayScore;
         private int AwayPowerRanking;
@@ -24,6 +32,9 @@ namespace FootballPicker.Parsers
         private Team Favorite;
         private double Spread;
 
+        /// <summary>
+        /// Update me if the DB ever changes!!!
+        /// </summary>
         private enum DATA_BASE_INDEX : int
         {
             SEASON = 0,
@@ -39,6 +50,24 @@ namespace FootballPicker.Parsers
             SPREAD,
             //This always needs to be at the bottom
             MAX
+        }
+
+        /// <summary>
+        /// New Game
+        /// </summary>
+        /// <param name="away"></param>
+        /// <param name="home"></param>
+        /// <param name="favorite"></param>
+        /// <param name="spread"></param>
+        /// <param name="week"></param>
+        public Game(Team away, Team home, Team favorite, double spread, Week week)
+        {
+            this.AwayTeam = away;
+            this.HomeTeam = home;
+            this.HomeTeamCopy = this.HomeTeam;
+            this.Favorite = favorite;
+            this.Spread = spread;
+            this.Week = week;
         }
 
         public Game(IList<Object> rawGame)
@@ -60,6 +89,32 @@ namespace FootballPicker.Parsers
             parseStringArayIntoGame(stringArray);
         }
 
+        /// <summary>
+        /// When parsing information from the internet we can use this to update the scores of a given game
+        /// </summary>
+        /// <param name="homeScore"></param>
+        /// <param name="awayScore"></param>
+        internal void UpdateScores(int homeScore, int awayScore)
+        {
+            this.HomeScore = homeScore;
+            this.AwayScore = awayScore;
+
+            //Assuming that there will never been a 0 to 0 tie
+            if(this.HomeScore + this.AwayScore > 0)
+            {
+                isFinished = true;
+            }
+            else
+            {
+                //Why did we try to update a score if we don't have it
+                Debugger.Break();
+            }
+        }
+
+        /// <summary>
+        /// This allows us to convert back to the DB
+        /// </summary>
+        /// <returns></returns>
         internal List<object> GetRaw()
         {
             List<object> rawGame = new List<object>();
@@ -70,7 +125,7 @@ namespace FootballPicker.Parsers
                 {
                     case DATA_BASE_INDEX.SEASON:
                         {
-                            rawGame.Add(Season.ToString());
+                            rawGame.Add(Week.season.ToString());
                             break;
                         }
                     case DATA_BASE_INDEX.WEEK:
@@ -135,6 +190,11 @@ namespace FootballPicker.Parsers
             return rawGame;
         }
 
+        /// <summary>
+        /// Used to update the power ranking of a given team in a given game
+        /// </summary>
+        /// <param name="teamName"></param>
+        /// <param name="rank"></param>
         internal void UpdatePowerRanking(Team teamName, int rank)
         {
             if(AwayTeam.Equals(teamName))
@@ -170,6 +230,11 @@ namespace FootballPicker.Parsers
             return powerRankingDifference;
         }
 
+        /// <summary>
+        /// Returns if the true if the team was home
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         internal bool IsHome(Team name)
         {
             return HomeTeamCopy.Equals(name);
@@ -250,6 +315,10 @@ namespace FootballPicker.Parsers
             return gameHasTeam;
         }
 
+        /// <summary>
+        /// For a game that is completed you can get the winner of a given game
+        /// </summary>
+        /// <returns></returns>
         internal Team GetActualWinner()
         {
             Team actualWinner = new Team();
@@ -266,6 +335,7 @@ namespace FootballPicker.Parsers
             return actualWinner;
         }
 
+        #region Private Functions
         /// <summary>
         /// Lets create a real Game out of the data
         /// </summary>
@@ -283,18 +353,18 @@ namespace FootballPicker.Parsers
                 }
                 else
                 {
-                    IsFinished = false;
+                    isFinished = false;
                 }
             }
             catch
             {
-                IsFinished = false;
+                isFinished = false;
             }
 
             try
             {
-                Season = new Season(rawGame[(int)DATA_BASE_INDEX.SEASON]);
-                Week = new Week(rawGame[(int)DATA_BASE_INDEX.WEEK], Season);
+                Season season = new Season(rawGame[(int)DATA_BASE_INDEX.SEASON]);
+                Week = new Week(rawGame[(int)DATA_BASE_INDEX.WEEK], season);
                 AwayTeam = new Team(rawGame[(int)DATA_BASE_INDEX.AWAY_TEAM]);                
                 HomeTeam = new Team(rawGame[(int)DATA_BASE_INDEX.HOME_TEAM]);
                 HomeTeamCopy = new Team(rawGame[(int)DATA_BASE_INDEX.HOME_TEAM_COPY]);
@@ -311,12 +381,14 @@ namespace FootballPicker.Parsers
             }
             catch (MissingFieldException ex)
             {
+                MessageBox.Show(ex.ToString());
                 //Lets set the validaity of the game to INVALID
                 IsValid = false;
 
             }
         }
 
+        #region Helper Private Functions
         private int convertDBtoPowerRanking(string powerRankingString)
         {
             int powerRanking = 0;
@@ -340,5 +412,17 @@ namespace FootballPicker.Parsers
                 throw new NotSupportedException("Team {" + name + "} Did not play in this game. It was {" + AwayTeam + " vs " + HomeTeam + "}");
             }
         }
+
+        #region Overrides
+        public override bool Equals(object obj)
+        {
+            Game game = (Game)obj;
+            return ((this.HomeTeam.Equals(game.HomeTeam)) &&
+                (this.AwayTeam.Equals(game.AwayTeam)) &&
+                (this.Week.Equals(game.Week)));
+        }
+        #endregion
     }
+    #endregion
+    #endregion
 }

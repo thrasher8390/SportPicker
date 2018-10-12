@@ -185,7 +185,8 @@ namespace FootballPicker.Parsers
                     returnValue = Name.HOUSTON_TEXANS;
                 }
                 else if (team.Contains("jaguars") ||
-                            team.Equals("jax"))
+                            team.Equals("jax") ||
+                            team.Equals("jac"))
                 {
                     returnValue = Name.JAGUARS;
                 }

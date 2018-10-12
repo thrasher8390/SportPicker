@@ -40,7 +40,7 @@ namespace FootballPicker
                     buildList(numLists, new List<double>(newList));
                 }
 
-                currentRating += .05;
+                currentRating += .1;
                 newList[newList.Count - 1] = currentRating;
             }
         }

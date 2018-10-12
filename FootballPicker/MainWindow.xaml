@@ -18,7 +18,7 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
 
-        <TextBox Grid.Row="0" Grid.Column="0" Name="tbWeekToCalculate" TextChanged="tbWeekToCalculate_TextChanged"/>
+        <TextBox Grid.Row="0" Grid.Column="0" x:Name="tbSeason" Margin="10,53,10,11"/>
 
         <ListBox Grid.Row="1" Grid.Column="1" Name="lbThisWeekWinners" ItemsSource="{Binding Path=ThisWeekWinners}" Margin="100,100,100,0" HorizontalContentAlignment="Stretch" VerticalAlignment="Top">
             <ListBox.ItemTemplate>
@@ -34,6 +34,11 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        <Button x:Name="btnCalculate" Content="Calculate" Grid.Column="1" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Top" Width="167" Height="48" Click="btnCalculate_Click"/>
+        <Button x:Name="btnUpdate" Content="Update" Grid.Column="1" HorizontalAlignment="Left" Margin="5,53,0,0" VerticalAlignment="Top" Width="167" Height="45" Click="btnUpdate_Click"/>
+        <TextBox Grid.Row="0" Grid.Column="2" x:Name="tbWeek" Margin="10,53,10,11"/>
+        <Label Content="Season&#xD;&#xA;" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="152" Height="38"/>
+        <Label Content="Week&#xA;" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="153" Height="38" Grid.Column="2"/>
     </Grid>
 
 </Window>

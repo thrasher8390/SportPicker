@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,9 +21,17 @@ namespace FootballPicker.Parsers
         {
             try
             {
-                if(year.Equals("2017"))
+                if (year.Equals("2017"))
                 {
                     season = 2017;
+                }
+                else if(year.Equals("2018"))
+                {
+                    season = 2018;    
+                }
+                else
+                {
+                    Debugger.Break();
                 }
             }
             catch
@@ -31,9 +40,9 @@ namespace FootballPicker.Parsers
             }
         }
 
-        public bool Equals(Season obj)
+        public override bool Equals(object obj)
         {
-            return this.season.Equals(obj.season);
+            return this.season.Equals(((Season)obj).season);
         }
 
         public bool IsLessThan(Season obj)
@@ -44,6 +53,11 @@ namespace FootballPicker.Parsers
         public static Season operator -(Season obj, int i)
         {
             return new Season(obj.season - 1);
+        }
+
+        public static Season operator +(Season obj, int i)
+        {
+            return new Season(obj.season + 1);
         }
 
         public override string ToString()

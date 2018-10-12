@@ -24,7 +24,7 @@ namespace FootballPicker.Criteria
 
             CriteriaList.Add(new AverageSpreadDifference(this.TeamInfo.AverageSpreadDifference.Get(), gameSpread));
             CriteriaList.Add(new HomeVsAwayDifference(this.TeamInfo.HomeGameScoreDifferential.Get(), TeamInfo.AwayGameScoreDifferential.Get(), isHome));
-            CriteriaList.Add(new WinLossPercentage(this.TeamInfo.WinLossMultiplier.Get()));
+            CriteriaList.Add(new WinLossPercentage(this.TeamInfo.WinLossPercentage.Get()));
             CriteriaList.Add(new HomeVsAwaySpreadMultiplier(this.TeamInfo.HomeGameSpreadMultiplier.Get(), TeamInfo.AwayGameSpreadMultiplier.Get(), gameSpread, isHome));
             CriteriaList.Add(new AverageScoreDifference(this.TeamInfo.AverageScoreDifference.Get()));
             CriteriaList.Add(new AveragePowerRankingMultiplier(this.TeamInfo.AveragePowerRankingMultiplier.Get(), game.GetPowerRankingDifference(TeamInfo.Name)));

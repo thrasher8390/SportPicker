@@ -23,7 +23,7 @@ namespace FootballPicker
 
         // Define request parameters.
         private const String SpreadsheetId = "1F3C1LaOyu9BQvQpFksRdt25SzDo9D3rgF58NyAWtqpc";
-        private const String Range = "2017!A2:K";
+        private String Range = "2017!A2:K";
 
         SheetsService Service;
 
@@ -77,7 +77,6 @@ namespace FootballPicker
         public IList<IList<Object>> GetDataBase()
         {
             IList<IList<Object>> Values;
-
             SpreadsheetsResource.ValuesResource.GetRequest request =
                     Service.Spreadsheets.Values.Get(SpreadsheetId, Range);
 

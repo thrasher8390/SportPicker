@@ -22,9 +22,14 @@ namespace FootballPicker.Analyzers
         public Averager HomeGameScoreDifferential = new Averager();
         public Averager AwayGameScoreDifferential = new Averager();
 
-        public Averager WinLossMultiplier = new Averager();
+        public Averager WinLossPercentage = new Averager();
         public Averager AveragePowerRankingMultiplier = new Averager();
 
+        /// <summary>
+        /// Used to analyz teams based on finished games
+        /// </summary>
+        /// <param name="teamName"></param>
+        /// <param name="gameList"></param>
         public Team(Parsers.Team teamName, List<Parsers.Game> gameList)
         {
             Name = teamName;
@@ -40,6 +45,11 @@ namespace FootballPicker.Analyzers
             }
         }
 
+        /// <summary>
+        /// analyze
+        /// AveragePowerRankingMultiplier
+        /// </summary>
+        /// <param name="game"></param>
         private void analyzePowerRanking(Parsers.Game game)
         {
             double powerRankingDifference = game.GetPowerRankingDifference(this.Name);
@@ -54,18 +64,28 @@ namespace FootballPicker.Analyzers
             AveragePowerRankingMultiplier.New(value);
         }
 
+        /// <summary>
+        /// analyze
+        /// WinLossPercentage
+        /// </summary>
+        /// <param name="game"></param>
         private void analyzeWinLoss(Parsers.Game game)
         {
             if (game.GetActualWinner().Equals(this.Name))
             {
-                WinLossMultiplier.New(1);
+                WinLossPercentage.New(1);
             }
             else
             {
-                WinLossMultiplier.New(0);
+                WinLossPercentage.New(0);
             }
         }
 
+        /// <summary>
+        /// analyse
+        /// HomeVsAwayDifference
+        /// </summary>
+        /// <param name="game"></param>
         private void analyzeHomeVsAway(Parsers.Game game)
         {
             if(game.IsHome(this.Name))
@@ -78,6 +98,14 @@ namespace FootballPicker.Analyzers
             }
         }
 
+        /// <summary>
+        /// analyze 
+        /// AverageScoreDifference
+        /// AverageSpreadDifference
+        /// AverageSpreadMultiplier
+        /// HomeVsAwaySpreadMultiplier
+        /// </summary>
+        /// <param name="game"></param>
         private void analyzeSpread(Parsers.Game game)
         {
             //returns + if Name won
