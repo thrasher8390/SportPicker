@@ -40,9 +40,15 @@ namespace FootballPicker.Parsers
             }
         }
 
+        #region overrides
         public override bool Equals(object obj)
         {
             return this.season.Equals(((Season)obj).season);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.season.GetHashCode();
         }
 
         public bool IsLessThan(Season obj)
@@ -64,5 +70,6 @@ namespace FootballPicker.Parsers
         {
             return season.ToString();
         }
+        #endregion
     }
 }

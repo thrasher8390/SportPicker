@@ -53,9 +53,15 @@ namespace FootballPicker.Parsers
             }
         }
 
+        #region overrides
         public override bool Equals(object obj)
         {
             return ((this.week == ((Week)obj).week) && (this.season.Equals(((Week)obj).season)));
+        }
+
+        public override int GetHashCode()
+        {
+            return this.week.GetHashCode() + this.season.GetHashCode();
         }
 
         public static Week operator -(Week obj, int i)
@@ -115,5 +121,6 @@ namespace FootballPicker.Parsers
         {
             return week.ToString();
         }
+        #endregion
     }
 }

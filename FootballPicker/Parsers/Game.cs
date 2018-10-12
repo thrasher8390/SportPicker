@@ -421,6 +421,11 @@ namespace FootballPicker.Parsers
                 (this.AwayTeam.Equals(game.AwayTeam)) &&
                 (this.Week.Equals(game.Week)));
         }
+
+        public override int GetHashCode()
+        {
+            return this.HomeTeam.GetHashCode() + this.AwayTeam.GetHashCode() + this.Week.GetHashCode();
+        }
         #endregion
     }
     #endregion
